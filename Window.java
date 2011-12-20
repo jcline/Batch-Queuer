@@ -13,8 +13,9 @@ public class Window
 		buttonPanel,
 		listPanel;
 	private JButton add,
+		clr,
 		del,
-		clr;
+		upl;
 	private JList list;
 	private JFileChooser fileChooser;
 	private File dir;
@@ -30,8 +31,9 @@ public class Window
 		listPanel = new JPanel();
 
 		add = new JButton("Add");
-		del = new JButton("Delete");
 		clr = new JButton("Clear");
+		del = new JButton("Delete");
+		upl = new JButton("Upload");
 
 		list = new JList();
 
@@ -41,14 +43,16 @@ public class Window
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 		add.addActionListener(listener);
-		del.addActionListener(listener);
 		clr.addActionListener(listener);
+		del.addActionListener(listener);
+		upl.addActionListener(listener);
 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		buttonPanel.add(add);
 		buttonPanel.add(del);
 		buttonPanel.add(clr);
+		buttonPanel.add(upl);
 
 		listPanel.add(list);
 
@@ -79,6 +83,10 @@ public class Window
 			else if(e.getSource() == clr)
 			{
 				list.setListData(new Object[1]);
+			}
+			else if(e.getSource() == upl)
+			{
+				return;
 			}
 		}
 	}
