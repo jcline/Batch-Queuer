@@ -31,8 +31,9 @@ public class Window
 
 		buttons.add(add);
 
-		topPanel.add(list);
-		topPanel.add(buttons);
+		topPanel.setLayout(new BorderLayout());
+		topPanel.add(list, BorderLayout.WEST); 
+		topPanel.add(buttons, BorderLayout.EAST);
 
 		window.add(topPanel);
 		window.pack();
