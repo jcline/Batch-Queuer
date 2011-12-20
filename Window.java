@@ -13,7 +13,7 @@ public class Window
 		buttonPanel,
 		listPanel;
 	private JButton add,
-    del,
+		del,
 		clr;
 	private JList list;
 	private JFileChooser fileChooser;
