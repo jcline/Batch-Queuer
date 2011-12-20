@@ -10,8 +10,8 @@ public class Window
 {
 	private JFrame window;
 	private JPanel topPanel,
-					       buttons,
-								 list;
+		buttons,
+		list;
 
 	public Window()
 	{
