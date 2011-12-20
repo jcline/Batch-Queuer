@@ -23,7 +23,7 @@ public class Window
 	{
 		bListener listener = new bListener();
 
-		window = new JFrame();
+		window = new JFrame("Batch Uploader");
 
 		topPanel = new JPanel();
 		buttonPanel = new JPanel();
@@ -70,7 +70,7 @@ public class Window
 				fileChooser.showDialog(window, null);
 				dir = fileChooser.getSelectedFile();
 
-				list.setListData(dir.list());
+				list.setListData(dir.listFiles());
 			}
 			else if(e.getSource() == del)
 			{
