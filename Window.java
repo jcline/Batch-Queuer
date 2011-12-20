@@ -10,9 +10,12 @@ public class Window
 {
 	private JFrame window;
 	private JPanel topPanel,
-		buttons,
-		list;
-	private JButton add;
+		buttonPanel,
+		listPanel;
+	private JButton add,
+    del,
+		clr;
+	private JList list;
 
 	public Window()
 	{
@@ -21,19 +24,26 @@ public class Window
 		window = new JFrame();
 
 		topPanel = new JPanel();
-		buttons = new JPanel();
-		list = new JPanel();
+		buttonPanel = new JPanel();
+		listPanel = new JPanel();
 
 		add = new JButton("Add");
+		del = new JButton("Delete");
+		clr = new JButton("Clear");
+
 		add.addActionListener(listener);
+		del.addActionListener(listener);
+		clr.addActionListener(listener);
 
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		buttons.add(add);
+		buttonPanel.add(add);
+		buttonPanel.add(del);
+		buttonPanel.add(clr);
 
 		topPanel.setLayout(new BorderLayout());
-		topPanel.add(list, BorderLayout.WEST); 
-		topPanel.add(buttons, BorderLayout.EAST);
+		topPanel.add(listPanel, BorderLayout.SOUTH); 
+		topPanel.add(buttonPanel, BorderLayout.NORTH);
 
 		window.add(topPanel);
 		window.pack();
@@ -45,7 +55,17 @@ public class Window
 		public void actionPerformed (ActionEvent e)
 		{
 			if(e.getSource() == add)
+			{
 				return;
+			}
+			else if(e.getSource() == del)
+			{
+				return;
+			}
+			else if(e.getSource() == clr)
+			{
+				return;
+			}
 		}
 	}
 }
