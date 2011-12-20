@@ -1,4 +1,4 @@
-
+import java.io.File;
 
 import java.awt.*;
 import javax.swing.*;
@@ -16,6 +16,8 @@ public class Window
     del,
 		clr;
 	private JList list;
+	private JFileChooser fileChooser;
+	private File dir;
 
 	public Window()
 	{
@@ -31,6 +33,13 @@ public class Window
 		del = new JButton("Delete");
 		clr = new JButton("Clear");
 
+		list = new JList();
+
+		fileChooser = new JFileChooser();
+		fileChooser.setApproveButtonText("Load files");
+
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
 		add.addActionListener(listener);
 		del.addActionListener(listener);
 		clr.addActionListener(listener);
@@ -40,6 +49,8 @@ public class Window
 		buttonPanel.add(add);
 		buttonPanel.add(del);
 		buttonPanel.add(clr);
+
+		listPanel.add(list);
 
 		topPanel.setLayout(new BorderLayout());
 		topPanel.add(listPanel, BorderLayout.SOUTH); 
@@ -56,7 +67,10 @@ public class Window
 		{
 			if(e.getSource() == add)
 			{
-				return;
+				fileChooser.showDialog(window, null);
+				dir = fileChooser.getSelectedFile();
+
+				list.setListData(dir.list());
 			}
 			else if(e.getSource() == del)
 			{
@@ -64,7 +78,7 @@ public class Window
 			}
 			else if(e.getSource() == clr)
 			{
-				return;
+				list.setListData(new Object[1]);
 			}
 		}
 	}
