@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FilenameFilter;
 
 import java.awt.*;
 import javax.swing.*;
@@ -18,6 +19,7 @@ public class Window
 		upl;
 	private JList list;
 	private JFileChooser fileChooser;
+	private JScrollPane scroll;
 	private File dir;
 
 	public Window()
@@ -37,28 +39,33 @@ public class Window
 
 		list = new JList();
 
-		fileChooser = new JFileChooser();
-		fileChooser.setApproveButtonText("Load files");
+		scroll = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		fileChooser = new JFileChooser();
 
 		add.addActionListener(listener);
 		clr.addActionListener(listener);
 		del.addActionListener(listener);
 		upl.addActionListener(listener);
 
-		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 		buttonPanel.add(add);
 		buttonPanel.add(del);
 		buttonPanel.add(clr);
 		buttonPanel.add(upl);
 
-		listPanel.add(list);
+		fileChooser.setApproveButtonText("Load files");
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		scroll.setPreferredSize(new Dimension(480,800));
+
+		listPanel.add(scroll);
 
 		topPanel.setLayout(new BorderLayout());
-		topPanel.add(listPanel, BorderLayout.SOUTH); 
+		topPanel.add(listPanel, BorderLayout.CENTER); 
 		topPanel.add(buttonPanel, BorderLayout.NORTH);
+
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setPreferredSize(new Dimension(480, 800));
 
 		window.add(topPanel);
 		window.pack();
@@ -74,7 +81,16 @@ public class Window
 				fileChooser.showDialog(window, null);
 				dir = fileChooser.getSelectedFile();
 
-				list.setListData(dir.listFiles());
+				list.setListData(dir.list(new FilenameFilter()
+					{
+						@Override 
+						public boolean accept(File dir, String name)
+						{
+							return (new File(dir, name)).isFile();
+						}
+					})
+				);
+
 			}
 			else if(e.getSource() == del)
 			{
