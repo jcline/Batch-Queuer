@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -81,15 +82,18 @@ public class Window
 				fileChooser.showDialog(window, null);
 				dir = fileChooser.getSelectedFile();
 
-				list.setListData(dir.list(new FilenameFilter()
+				Object[] l = dir.list(new FilenameFilter()
 					{
 						@Override 
 						public boolean accept(File dir, String name)
 						{
 							return (new File(dir, name)).isFile();
 						}
-					})
+					}
 				);
+
+				Arrays.sort(l);
+				list.setListData(l);
 
 			}
 			else if(e.getSource() == del)
