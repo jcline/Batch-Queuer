@@ -106,6 +106,13 @@ public class Window
 			}
 			else if(e.getSource() == upl)
 			{
+				CredentialsDialog cr;
+				if(BatchUploader.credentials == null)
+				{
+					cr = new CredentialsDialog();
+					if(cr.cancel)
+						return;
+				}
 				return;
 			}
 		}

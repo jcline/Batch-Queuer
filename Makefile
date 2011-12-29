@@ -2,8 +2,8 @@
 OBJS = \
 			 Window.java \
 			 Credentials.java \
-			 CredentialsWindow.java \
+			 CredentialsDialog.java \
        BatchUploader.java
 
 BatchUploader:
-	javac $(OBJS)
+	javac -Xlint:deprecation $(OBJS)
