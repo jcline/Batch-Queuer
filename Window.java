@@ -1,4 +1,6 @@
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -7,6 +9,8 @@ import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import net.asplode.tumblr.PhotoPost;
 
 public class Window
 {
@@ -22,9 +26,12 @@ public class Window
 	private JFileChooser fileChooser;
 	private JScrollPane scroll;
 	private File dir;
+	private ArrayList<File> files;
 
 	public Window()
 	{
+		files = new ArrayList<File>();
+
 		bListener listener = new bListener();
 
 		window = new JFrame("Batch Uploader");
@@ -82,7 +89,7 @@ public class Window
 				fileChooser.showDialog(window, null);
 				dir = fileChooser.getSelectedFile();
 
-				Object[] l = dir.list(new FilenameFilter()
+				String[] l = dir.list(new FilenameFilter()
 					{
 						@Override 
 						public boolean accept(File dir, String name)
@@ -92,8 +99,11 @@ public class Window
 					}
 				);
 
-				Arrays.sort(l);
-				list.setListData(l);
+				for(String i : l)
+					files.add(new File(i));
+
+				Collections.sort(files);
+				list.setListData(files.toArray());
 
 			}
 			else if(e.getSource() == del)
@@ -106,13 +116,56 @@ public class Window
 			}
 			else if(e.getSource() == upl)
 			{
-				CredentialsDialog cr;
 				if(BatchUploader.credentials == null)
 				{
-					cr = new CredentialsDialog();
-					if(cr.cancel)
+					Credentials c = new Credentials(JOptionPane.showInputDialog("Username"), JOptionPane.showInputDialog("Password"));
+					if(c != null)
+						BatchUploader.credentials = c;
+					else
 						return;
 				}
+
+				GregorianCalendar time = new GregorianCalendar();
+				for(File f : files)
+				{
+					System.out.println("Uploading " + f.toString());
+					PhotoPost p = new PhotoPost();
+					try {
+						p.setCredentials(BatchUploader.credentials.user,BatchUploader.credentials.pass);
+					}
+					catch(Exception ex)
+					{
+						System.out.println("Failed");
+						System.out.println(ex);
+					}
+					try {
+						p.setSourceFile(f);
+					}
+					catch(Exception ex)
+					{
+						System.out.println("Failed2");
+						System.out.println(ex);
+					}
+
+					time.add(GregorianCalendar.HOUR, 1);
+					try {
+						p.setPublishOn(time.getTime().toString());
+					}
+					catch(Exception ex)
+					{
+						System.out.println("Failed3");
+						System.out.println(ex);
+					}
+					try {
+						p.postToTumblr();
+					}
+					catch(Exception ex)
+					{
+						System.out.println("Failed4");
+						System.out.println(ex);
+					}
+				}
+
 				return;
 			}
 		}

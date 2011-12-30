@@ -53,6 +53,7 @@ public class CredentialsDialog
 
 		dialog.pack();
 		dialog.setVisible(true);
+		dialog.setModal(true);
 	}
 
 	private class bListener implements ActionListener

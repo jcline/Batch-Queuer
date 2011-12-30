@@ -6,4 +6,4 @@ OBJS = \
        BatchUploader.java
 
 BatchUploader:
-	javac -Xlint:deprecation $(OBJS)
+	javac -Xlint:deprecation -cp ".:libs/*" $(OBJS)
