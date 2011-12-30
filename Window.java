@@ -100,7 +100,7 @@ public class Window
 				);
 
 				for(String i : l)
-					files.add(new File(i));
+					files.add(new File(dir + "/" + i));
 
 				Collections.sort(files);
 				list.setListData(files.toArray());
@@ -113,17 +113,31 @@ public class Window
 			else if(e.getSource() == clr)
 			{
 				list.setListData(new Object[1]);
+				files.clear();
 			}
 			else if(e.getSource() == upl)
 			{
 				if(BatchUploader.credentials == null)
 				{
-					Credentials c = new Credentials(JOptionPane.showInputDialog("Username"), JOptionPane.showInputDialog("Password"));
+					String user = JOptionPane.showInputDialog("Username");
+					String pass;
+					if(user == null || user.length() == 0)
+						return;
+					pass = JOptionPane.showInputDialog("Password");
+					if(pass == null || pass.length() == 0)
+						return;
+
+					Credentials c = new Credentials(user, pass);
 					if(c != null)
 						BatchUploader.credentials = c;
 					else
 						return;
 				}
+
+				add.setEnabled(false);
+				del.setEnabled(false);
+				clr.setEnabled(false);
+				upl.setEnabled(false);
 
 				GregorianCalendar time = new GregorianCalendar();
 				for(File f : files)
@@ -135,16 +149,16 @@ public class Window
 					}
 					catch(Exception ex)
 					{
-						System.out.println("Failed");
 						System.out.println(ex);
+						return;
 					}
 					try {
 						p.setSourceFile(f);
 					}
 					catch(Exception ex)
 					{
-						System.out.println("Failed2");
 						System.out.println(ex);
+						return;
 					}
 
 					time.add(GregorianCalendar.HOUR, 1);
@@ -153,18 +167,33 @@ public class Window
 					}
 					catch(Exception ex)
 					{
-						System.out.println("Failed3");
 						System.out.println(ex);
+						return;
 					}
 					try {
-						p.postToTumblr();
+						int ret = p.postToTumblr();
+						if(ret != 200) {
+							JOptionPane.showMessageDialog(null, "Failed to upload file, status: " + ret , "information", JOptionPane.INFORMATION_MESSAGE);
+							add.setEnabled(true);
+							del.setEnabled(true);
+							clr.setEnabled(true);
+							upl.setEnabled(true);
+							return;
+						}
 					}
 					catch(Exception ex)
 					{
-						System.out.println("Failed4");
+						JOptionPane.showMessageDialog(null, "Failed to upload file.\n" + ex.toString(), "information", JOptionPane.INFORMATION_MESSAGE);
 						System.out.println(ex);
+						return;
 					}
 				}
+				JOptionPane.showMessageDialog(null, "Files uploaded.", "information", JOptionPane.INFORMATION_MESSAGE);
+
+				add.setEnabled(true);
+				del.setEnabled(true);
+				clr.setEnabled(true);
+				upl.setEnabled(true);
 
 				return;
 			}
