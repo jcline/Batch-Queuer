@@ -1,7 +1,12 @@
 A simple JAVA program to submit items to tumblr's posting queue.
 
+Depends on https://github.com/nsheridan/tumblr-java
+The make and run.sh scripts assume there is a tumblr-java.jar in libs
+as well as all the .jar files tumblr-java requires being in libs.
+
 Compilation:
 	make
 
 Execution:
-	java BatchUploader
+  ./run.sh
+	
