@@ -8,5 +8,5 @@ Compilation:
 	make
 
 Execution:
-  ./run.sh
+	./run.sh
 	
