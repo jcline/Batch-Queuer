@@ -12,7 +12,9 @@ import java.awt.event.ActionListener;
 
 import net.asplode.tumblr.PhotoPost;
 
-public class Window
+import java.lang.Thread;
+
+public class Window implements Runnable
 {
 	private JFrame window;
 	private JPanel topPanel,
@@ -29,9 +31,12 @@ public class Window
 	private File dir;
 	private ArrayList<File> files;
 	private JLabel progress;
+	private int interval;
+	private Window win;
 
 	public Window()
 	{
+		win = this;
 		files = new ArrayList<File>();
 
 		bListener listener = new bListener();
@@ -97,8 +102,77 @@ public class Window
 		upl.setEnabled(state);
 	}
 
-	private void run()
+	public void run()
 	{
+
+		GregorianCalendar time = new GregorianCalendar();
+		int count = 0;
+		for(File f : files)
+		{
+			++count;
+			progress.setText("Uploading " + count + "/" + files.size());
+			//JComponent.paintImmediately(progressPanel.getVisibleRect()); // Ugly hack because we are in the event dispatch thread
+			PhotoPost p = new PhotoPost();
+			try {
+				p.setCredentials(BatchUploader.credentials.user,BatchUploader.credentials.pass);
+			}
+			catch(Exception ex)
+			{
+				System.out.println(ex);
+				setButtonState(true);
+				return;
+			}
+			try {
+				p.setSourceFile(f);
+			}
+			catch(Exception ex)
+			{
+				System.out.println(ex);
+				setButtonState(true);
+				return;
+			}
+
+			time.add(GregorianCalendar.MINUTE, interval);
+			try {
+				p.setPublishOn(time.getTime().toString());
+			}
+			catch(Exception ex)
+			{
+				System.out.println(ex);
+				setButtonState(true);
+				return;
+			}
+			try {
+				int ret = p.postToTumblr();
+				if(ret != 201)
+				{
+					if(ret == 403)
+					{
+						JOptionPane.showMessageDialog(null, "Failed to upload file(s), invalid email or password.", "information", JOptionPane.INFORMATION_MESSAGE);
+						BatchUploader.credentials = null;
+					}
+					else if(ret == 400)
+					{
+						JOptionPane.showMessageDialog(null, "Failed to upload file(s), unknown reason.", "information", JOptionPane.INFORMATION_MESSAGE);
+					}
+					progress.setText("");
+					setButtonState(true);
+					return;
+				}
+			}
+			catch(Exception ex)
+			{
+				JOptionPane.showMessageDialog(null, "Failed to upload file.\n" + ex.toString(), "information", JOptionPane.INFORMATION_MESSAGE);
+				progress.setText("");
+				System.out.println(ex);
+				setButtonState(true);
+				return;
+			}
+		}
+		JOptionPane.showMessageDialog(null, "Files uploaded.", "information", JOptionPane.INFORMATION_MESSAGE);
+
+		setButtonState(true);
+		progress.setText("");
 	}
 
 	private class bListener implements ActionListener
@@ -145,13 +219,13 @@ public class Window
 					String user = JOptionPane.showInputDialog("Email address");
 					String pass;
 					if(user == null || user.length() == 0)
-				 	{
+					{
 						setButtonState(true);
 						return;
 					}
 					pass = JOptionPane.showInputDialog("Password");
 					if(pass == null || pass.length() == 0)
-				 	{
+					{
 						setButtonState(true);
 						return;
 					}
@@ -166,7 +240,7 @@ public class Window
 					}
 				}
 
-				int interval = 0;
+				interval = 0;
 				while(interval == 0)
 				{
 					int x;
@@ -182,75 +256,8 @@ public class Window
 					interval = x;
 				}
 
-				GregorianCalendar time = new GregorianCalendar();
-				int count = 0;
-				for(File f : files)
-				{
-					++count;
-					progress.setText("Uploading " + count + "/" + files.size());
-					JComponent.paintImmediately(progressPanel.getVisibleRect()); // Ugly hack because we are in the event dispatch thread
-					PhotoPost p = new PhotoPost();
-					try {
-						p.setCredentials(BatchUploader.credentials.user,BatchUploader.credentials.pass);
-					}
-					catch(Exception ex)
-					{
-						System.out.println(ex);
-						setButtonState(true);
-						return;
-					}
-					try {
-						p.setSourceFile(f);
-					}
-					catch(Exception ex)
-					{
-						System.out.println(ex);
-						setButtonState(true);
-						return;
-					}
-
-					time.add(GregorianCalendar.MINUTE, interval);
-					try {
-						p.setPublishOn(time.getTime().toString());
-					}
-					catch(Exception ex)
-					{
-						System.out.println(ex);
-						setButtonState(true);
-						return;
-					}
-					try {
-						int ret = p.postToTumblr();
-						if(ret != 201)
-						{
-							if(ret == 403)
-							{
-								JOptionPane.showMessageDialog(null, "Failed to upload file(s), invalid email or password.", "information", JOptionPane.INFORMATION_MESSAGE);
-								BatchUploader.credentials = null;
-							}
-							else if(ret == 400)
-							{
-								JOptionPane.showMessageDialog(null, "Failed to upload file(s), unknown reason.", "information", JOptionPane.INFORMATION_MESSAGE);
-							}
-							progress.setText("");
-							setButtonState(true);
-							return;
-						}
-					}
-					catch(Exception ex)
-					{
-						JOptionPane.showMessageDialog(null, "Failed to upload file.\n" + ex.toString(), "information", JOptionPane.INFORMATION_MESSAGE);
-						progress.setText("");
-						System.out.println(ex);
-						setButtonState(true);
-						return;
-					}
-				}
-				JOptionPane.showMessageDialog(null, "Files uploaded.", "information", JOptionPane.INFORMATION_MESSAGE);
-
-				setButtonState(true);
-				progress.setText("");
-
+				Thread thread = new Thread(win);
+				thread.start();
 				return;
 			}
 		}
