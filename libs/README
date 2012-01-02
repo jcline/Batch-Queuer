@@ -1,0 +1,15 @@
+This folder contains https://github.com/nsheridan/tumblr-java and the JARs
+it requires to run, as retrieved on 12/29/2011.
+
+tumblr-java.jar is distributed having been compiled, additionally it contains
+the entire source code and directory structure as retrieved. I believe this
+fulfills my obligation wrt the Apache license. No other modifications have
+been made.
+
+To access the source of tumblr-java as distributed here:
+jar xf tumblr-java.jar
+
+The other JARs in this directory are distributed under the assumption they
+may be distributed alongside tumblr-java without issue. If this assumption
+is incorrect, please contact me at james.cline@gatech.edu and I will make
+any necessary corrections at the earliest possible date.
