@@ -105,6 +105,8 @@ public class Window implements Runnable
 	public void run()
 	{
 
+		String tags = JOptionPane.showInputDialog("Tags for this post, separated by commas (leave empty for no tags):");
+
 		GregorianCalendar time = new GregorianCalendar();
 		int count = 0;
 		for(File f : files)
@@ -142,6 +144,19 @@ public class Window implements Runnable
 				setButtonState(true);
 				return;
 			}
+
+			if(tags.length() > 0)
+			{
+				try {
+					p.setTags(tags);
+				}
+				catch (Exception ex) {
+					System.out.println(ex);
+					setButtonState(true);
+					return;
+				}
+			}
+
 			try {
 				int ret = p.postToTumblr();
 				if(ret != 201)
