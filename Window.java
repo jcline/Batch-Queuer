@@ -204,6 +204,8 @@ public class Window implements Runnable
 						@Override 
 						public boolean accept(File dir, String name)
 						{
+							if(name[0] == '.')
+								return false;
 							return (new File(dir, name)).isFile();
 						}
 					}
